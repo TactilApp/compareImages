@@ -31,4 +31,8 @@
 -(UIImage *)cropImage:(UIImage *)image fromX:(float) x width:(float) width;
 -(IBAction)sliderChange:(id)sender;
 -(void)updateValueSliders;
+
+-(IBAction)save;
+-(IBAction)compare;
+-(BOOL)compareImage:(UIImage *)image1 withImage:(UIImage *)image2;
 @end
