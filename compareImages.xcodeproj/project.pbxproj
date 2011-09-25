@@ -16,6 +16,7 @@
 		B9D1B1D0142F6F120064C113 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9D1B1CE142F6F120064C113 /* MainWindow.xib */; };
 		B9D1B1D3142F6F120064C113 /* compareImagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9D1B1D2142F6F120064C113 /* compareImagesViewController.m */; };
 		B9D1B1D6142F6F120064C113 /* compareImagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9D1B1D4142F6F120064C113 /* compareImagesViewController.xib */; };
+		B9D1B1DE142F74900064C113 /* captcha.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B9D1B1DD142F74900064C113 /* captcha.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		B9D1B1D1142F6F120064C113 /* compareImagesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compareImagesViewController.h; sourceTree = "<group>"; };
 		B9D1B1D2142F6F120064C113 /* compareImagesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = compareImagesViewController.m; sourceTree = "<group>"; };
 		B9D1B1D5142F6F120064C113 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/compareImagesViewController.xib; sourceTree = "<group>"; };
+		B9D1B1DD142F74900064C113 /* captcha.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = captcha.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 		B9D1B1C2142F6F120064C113 /* compareImages */ = {
 			isa = PBXGroup;
 			children = (
+				B9D1B1DC142F743F0064C113 /* Resources */,
 				B9D1B1CB142F6F120064C113 /* compareImagesAppDelegate.h */,
 				B9D1B1CC142F6F120064C113 /* compareImagesAppDelegate.m */,
 				B9D1B1CE142F6F120064C113 /* MainWindow.xib */,
@@ -99,6 +102,14 @@
 				B9D1B1CA142F6F120064C113 /* compareImages-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B9D1B1DC142F743F0064C113 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B9D1B1DD142F74900064C113 /* captcha.jpg */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,6 +165,7 @@
 				B9D1B1C7142F6F120064C113 /* InfoPlist.strings in Resources */,
 				B9D1B1D0142F6F120064C113 /* MainWindow.xib in Resources */,
 				B9D1B1D6142F6F120064C113 /* compareImagesViewController.xib in Resources */,
+				B9D1B1DE142F74900064C113 /* captcha.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
