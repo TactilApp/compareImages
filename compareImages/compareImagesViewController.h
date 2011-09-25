@@ -7,12 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ASIHTTPRequest.h"
 
 @interface compareImagesViewController : UIViewController{
     UIImageView *captcha;
     UIImageView *chr1, *chr2, *chr3, *chr4, *chr5, *chr6;
     UISlider *sliderX, *sliderWidth;
     UILabel *labelX, *labelWidth;
+    UITextField *block1, *block2, *block3;
 }
     @property (nonatomic, retain) IBOutlet UIImageView *captcha;
     @property (nonatomic, retain) IBOutlet UIImageView *chr1;
@@ -28,6 +30,10 @@
     @property (nonatomic, retain) IBOutlet UILabel *labelX;
     @property (nonatomic, retain) IBOutlet UILabel *labelWidth;
 
+    @property (nonatomic, retain) IBOutlet UITextField *block1;
+    @property (nonatomic, retain) IBOutlet UITextField *block2;
+    @property (nonatomic, retain) IBOutlet UITextField *block3;
+
 -(UIImage *)cropImage:(UIImage *)image fromX:(float) x width:(float) width;
 -(IBAction)sliderChange:(id)sender;
 -(void)updateValueSliders;
@@ -35,4 +41,5 @@
 -(IBAction)save;
 -(IBAction)compare;
 -(BOOL)compareImage:(UIImage *)image1 withImage:(UIImage *)image2;
+-(IBAction)splitImages;
 @end

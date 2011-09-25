@@ -13,6 +13,7 @@
 @synthesize chr1, chr2, chr3, chr4, chr5, chr6;
 @synthesize sliderX, sliderWidth;
 @synthesize labelX, labelWidth;
+@synthesize block1, block2, block3;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad{
@@ -46,10 +47,25 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, 
                                                          NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString* path = [documentsDirectory stringByAppendingPathComponent: 
-                      [NSString stringWithString: @"test.png"] ];
-    NSData* data = UIImagePNGRepresentation(chr1.image);
-    [data writeToFile:path atomically:YES];
+    
+    if (block1.text != @""){
+        NSString* path = [documentsDirectory stringByAppendingPathComponent: 
+                      [NSString stringWithFormat:@"%@.png", block1.text]];
+        NSData *data = UIImagePNGRepresentation(chr1.image);
+        [data writeToFile:path atomically:YES];
+    } 
+    if (block2.text != @""){
+        NSString* path = [documentsDirectory stringByAppendingPathComponent: 
+                          [NSString stringWithFormat:@"%@.png", block2.text]];
+        NSData *data = UIImagePNGRepresentation(chr2.image);
+        [data writeToFile:path atomically:YES];
+    } 
+    if (block3.text != @""){
+        NSString* path = [documentsDirectory stringByAppendingPathComponent: 
+                          [NSString stringWithFormat:@"%@.png", block3.text]];
+        NSData *data = UIImagePNGRepresentation(chr3.image);
+        [data writeToFile:path atomically:YES];
+    } 
 }
 
 -(IBAction)compare{
@@ -123,6 +139,48 @@
         }
     }
     return TRUE;
+}
+#define CHR1_X  6
+#define CHR2_X  50
+#define CHR3_X  85
+#define CHR4_X  65
+#define CHR5_X  4
+#define CHR6_X  4
+
+#define CHR1_WIDTH  35
+#define CHR2_WIDTH  35
+#define CHR3_WIDTH  35
+#define CHR4_WIDTH  15
+#define CHR5_WIDTH  15
+#define CHR6_WIDTH  15
+-(IBAction)splitImages{
+    [chr1 setImage:[self cropImage:captcha.image fromX:CHR1_X width:CHR1_WIDTH]];
+    [chr2 setImage:[self cropImage:captcha.image fromX:CHR2_X width:CHR2_WIDTH]];
+    [chr3 setImage:[self cropImage:captcha.image fromX:CHR3_X width:CHR3_WIDTH]];
+    [chr4 setImage:[self cropImage:captcha.image fromX:CHR4_X width:CHR4_WIDTH]];
+    [chr5 setImage:[self cropImage:captcha.image fromX:CHR5_X width:CHR5_WIDTH]];
+    [chr6 setImage:[self cropImage:captcha.image fromX:CHR6_X width:CHR6_WIDTH]];
+    
+    for (int i=1; i<=6; i++){
+        UIImageView *imageViewAux = [self valueForKey:[NSString stringWithFormat:@"chr%d", i ]];
+        [imageViewAux setFrame:CGRectMake(imageViewAux.frame.origin.x, imageViewAux.frame.origin.y, imageViewAux.image.size.width*2, imageViewAux.image.size.height*2)];
+    }
+}
+
+#define CAPTCHA_URL @"http://www.cmt.es/cmt_ptl_ext/Captcha.jpg"
+
+-(IBAction)cargarImagen{
+    block1.text = @"";
+    block2.text = @"";
+    block3.text = @"";
+    
+    NSURL *url = [NSURL URLWithString:CAPTCHA_URL];
+    ASIHTTPRequest *request = [[ASIHTTPRequest alloc] initWithURL:url];
+    [request startSynchronous];
+    [captcha setImage:[UIImage imageWithData:[request responseData]]];
+    [request release];
+    
+    [self splitImages];
 }
 
 @end
