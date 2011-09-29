@@ -12,6 +12,7 @@
 @interface compareImagesViewController : UIViewController{
     UIImageView *captcha;
     UIImageView *chr1, *chr2, *chr3, *chr4, *chr5, *chr6;
+    UIImageView *imageCompose;
     UISlider *sliderX, *sliderWidth;
     UILabel *labelX, *labelWidth;
     UITextField *block1, *block2, *block3;
@@ -23,6 +24,8 @@
     @property (nonatomic, retain) IBOutlet UIImageView *chr4;
     @property (nonatomic, retain) IBOutlet UIImageView *chr5;
     @property (nonatomic, retain) IBOutlet UIImageView *chr6;
+
+    @property (nonatomic, retain) IBOutlet UIImageView *imageCompose;
     
     @property (nonatomic, retain) IBOutlet UISlider *sliderX;
     @property (nonatomic, retain) IBOutlet UISlider *sliderWidth;
@@ -42,4 +45,7 @@
 -(IBAction)compare;
 -(BOOL)compareImage:(UIImage *)image1 withImage:(UIImage *)image2;
 -(IBAction)splitImages;
+-(IBAction)cargarImagen;
+-(IBAction)autoguardado:(id)sender;
+-(IBAction)composeImage;
 @end

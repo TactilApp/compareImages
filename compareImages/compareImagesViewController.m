@@ -14,12 +14,12 @@
 @synthesize sliderX, sliderWidth;
 @synthesize labelX, labelWidth;
 @synthesize block1, block2, block3;
+@synthesize imageCompose;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad{
     [super viewDidLoad];
-    [self updateValueSliders];
-    [captcha setImage:[UIImage imageNamed:@"captcha.jpg"]];
+    [self cargarImagen];
 }
 
 -(UIImage *)cropImage:(UIImage *)image fromX:(float) x width:(float) width{
@@ -50,22 +50,24 @@
     
     if (block1.text != @""){
         NSString* path = [documentsDirectory stringByAppendingPathComponent: 
-                      [NSString stringWithFormat:@"%@.png", block1.text]];
+                      [NSString stringWithFormat:@"block1/1%@.png", block1.text]];
         NSData *data = UIImagePNGRepresentation(chr1.image);
         [data writeToFile:path atomically:YES];
     } 
     if (block2.text != @""){
         NSString* path = [documentsDirectory stringByAppendingPathComponent: 
-                          [NSString stringWithFormat:@"%@.png", block2.text]];
+                          [NSString stringWithFormat:@"block2/2%@.png", block2.text]];
         NSData *data = UIImagePNGRepresentation(chr2.image);
         [data writeToFile:path atomically:YES];
     } 
     if (block3.text != @""){
         NSString* path = [documentsDirectory stringByAppendingPathComponent: 
-                          [NSString stringWithFormat:@"%@.png", block3.text]];
+                          [NSString stringWithFormat:@"block3/3%@.png", block3.text]];
         NSData *data = UIImagePNGRepresentation(chr3.image);
         [data writeToFile:path atomically:YES];
-    } 
+    }
+    
+    [self cargarImagen];
 }
 
 -(IBAction)compare{
@@ -89,6 +91,10 @@
 }
 
 -(BOOL)compareImage:(UIImage *)image1 withImage:(UIImage *)image2{
+    if (image1 == nil || image2 == nil){
+        NSLog(@"NILLLL");
+        return FALSE;
+    }
     int errores = 0;
     CGImageRef cgimage1 = image1.CGImage;
     CGImageRef cgimage2 = image2.CGImage;
@@ -138,7 +144,7 @@
             }
         }
     }
-    return TRUE;
+    return (errores < 10);
 }
 #define CHR1_X  6
 #define CHR2_X  50
@@ -157,14 +163,69 @@
     [chr1 setImage:[self cropImage:captcha.image fromX:CHR1_X width:CHR1_WIDTH]];
     [chr2 setImage:[self cropImage:captcha.image fromX:CHR2_X width:CHR2_WIDTH]];
     [chr3 setImage:[self cropImage:captcha.image fromX:CHR3_X width:CHR3_WIDTH]];
-    [chr4 setImage:[self cropImage:captcha.image fromX:CHR4_X width:CHR4_WIDTH]];
-    [chr5 setImage:[self cropImage:captcha.image fromX:CHR5_X width:CHR5_WIDTH]];
-    [chr6 setImage:[self cropImage:captcha.image fromX:CHR6_X width:CHR6_WIDTH]];
     
-    for (int i=1; i<=6; i++){
+    for (int i=1; i<=3; i++){
         UIImageView *imageViewAux = [self valueForKey:[NSString stringWithFormat:@"chr%d", i ]];
         [imageViewAux setFrame:CGRectMake(imageViewAux.frame.origin.x, imageViewAux.frame.origin.y, imageViewAux.image.size.width*2, imageViewAux.image.size.height*2)];
     }
+    
+    int incompletos = 0;
+
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, 
+                                                         NSUserDomainMask, YES);
+    NSString *documentsDirectory = [[paths objectAtIndex:0] stringByAppendingString:@"/block1"];
+    NSArray *dirContents = [[NSFileManager defaultManager] directoryContentsAtPath:documentsDirectory];
+    for (NSString *tString in dirContents) {
+        UIImage *imgTmp = [[UIImage alloc] initWithContentsOfFile:[documentsDirectory stringByAppendingPathComponent:tString]];
+        if ([self compareImage:imgTmp withImage:chr1.image]){
+            block1.text = [tString substringWithRange:NSMakeRange(1, 2)];
+            [imgTmp release];
+            incompletos++;
+            break;
+        }
+        [imgTmp release];
+    }
+
+
+
+
+
+
+    NSString *documentsDirectory2 = [[paths objectAtIndex:0] stringByAppendingString:@"/block2"];
+    NSArray *dirContents2 = [[NSFileManager defaultManager] directoryContentsAtPath:documentsDirectory2];
+    for (NSString *tString in dirContents2) {
+        UIImage *imgTmp = [[UIImage alloc] initWithContentsOfFile:[documentsDirectory2 stringByAppendingPathComponent:tString]];
+        if ([self compareImage:imgTmp withImage:chr2.image]){
+            block2.text = [tString substringWithRange:NSMakeRange(1, 2)];
+            [imgTmp release];
+            incompletos++;
+            break;
+        }
+        [imgTmp release];
+    }
+
+
+    
+    
+    
+    NSString *documentsDirectory3 = [[paths objectAtIndex:0] stringByAppendingString:@"/block3"];
+    NSArray *dirContents3 = [[NSFileManager defaultManager] directoryContentsAtPath:documentsDirectory3];
+    for (NSString *tString in dirContents3) {
+        UIImage *imgTmp = [[UIImage alloc] initWithContentsOfFile:[documentsDirectory3 stringByAppendingPathComponent:tString]];
+        if ([self compareImage:imgTmp withImage:chr3.image]){
+            block3.text = [tString substringWithRange:NSMakeRange(1, 2)];
+            [imgTmp release];
+            incompletos++;
+            break;
+        }
+        [imgTmp release];
+    }
+    
+    if (incompletos > 1){
+        NSLog(@"Completos: %d", incompletos);
+        [self cargarImagen];
+    }
+
 }
 
 #define CAPTCHA_URL @"http://www.cmt.es/cmt_ptl_ext/Captcha.jpg"
@@ -181,6 +242,33 @@
     [request release];
     
     [self splitImages];
+}
+
+-(IBAction)autoguardado:(id)sender{
+    if ([block3.text length] == 2){
+        [self save];
+    }
+}
+
+
+-(IBAction)composeImage{
+    //Joins 3 UIImages together, stitching them vertically
+    CGSize size = CGSizeMake(35, 120);
+    UIGraphicsBeginImageContext(size);
+    
+    CGPoint image1Point = CGPointMake(0, 0);
+    [chr1.image drawAtPoint:image1Point];
+    
+    CGPoint image2Point = CGPointMake(0, chr1.image.size.height);
+    [chr2.image drawAtPoint:image2Point];
+    
+    CGPoint image3Point = CGPointMake(0, chr1.image.size.height +chr2.image.size.height);
+    [chr3.image drawAtPoint:image3Point];
+    
+    UIImage* finalImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    [imageCompose setBackgroundColor:[UIColor redColor]];
+    [imageCompose setImage:finalImage];
 }
 
 @end
