@@ -19,7 +19,7 @@
 #pragma mark - View lifecycle
 - (void)viewDidLoad{
     [super viewDidLoad];
-    [self cargarImagen];
+    //[self cargarImagen];
 }
 
 -(UIImage *)cropImage:(UIImage *)image fromX:(float) x width:(float) width{
@@ -250,25 +250,47 @@
     }
 }
 
+#define HEIGHT_IM 40
 
 -(IBAction)composeImage{
-    //Joins 3 UIImages together, stitching them vertically
-    CGSize size = CGSizeMake(35, 120);
-    UIGraphicsBeginImageContext(size);
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
     
-    CGPoint image1Point = CGPointMake(0, 0);
-    [chr1.image drawAtPoint:image1Point];
-    
-    CGPoint image2Point = CGPointMake(0, chr1.image.size.height);
-    [chr2.image drawAtPoint:image2Point];
-    
-    CGPoint image3Point = CGPointMake(0, chr1.image.size.height +chr2.image.size.height);
-    [chr3.image drawAtPoint:image3Point];
-    
-    UIImage* finalImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    [imageCompose setBackgroundColor:[UIColor redColor]];
-    [imageCompose setImage:finalImage];
+    for (int block = 1; block <= 3; block++){
+        NSLog(@"Inicio block%i", block);
+
+        CGSize size = CGSizeMake(CHR1_WIDTH*36, HEIGHT_IM*36);
+        UIGraphicsBeginImageContext(size);            
+        
+        int col = 0;
+        int row = 0;
+        for (int i = 48; i <= 122; i++){
+            if (i == 58) i = 97;
+            for (int e = 48; e <= 122; e++){
+                if (e == 58) e = 97;
+                NSString *filePathTmp = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat:@"block%i/%i%c%c.png", block, block, (char)i, (char)e]];
+                if ([fileManager fileExistsAtPath:filePathTmp]) {
+                    CGPoint imagePoint = CGPointMake(col*CHR1_WIDTH, row*HEIGHT_IM);
+                    UIImage *imageTmp = [UIImage imageWithContentsOfFile:filePathTmp];
+                    [imageTmp drawAtPoint:imagePoint];
+                }
+                col++;
+            }
+            col = 0;
+            row++;
+        }
+        UIImage* finalImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        NSData *data = UIImagePNGRepresentation(finalImage);
+        NSString *filePathFinal = [documentsDirectory stringByAppendingPathComponent: [NSString stringWithFormat:@"block%i.png", block]];
+        [data writeToFile:filePathFinal atomically:YES];
+        
+        NSLog(@"Fin block%i", block);
+    }
+//    [imageCompose setBackgroundColor:[UIColor redColor]];
+//    [imageCompose setImage:finalImage];
 }
 
 @end
